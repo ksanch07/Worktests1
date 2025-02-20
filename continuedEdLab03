@@ -1,0 +1,36 @@
+//global variables
+let customerType
+let invoiceTotal
+let discountPercent
+let discountAmount
+let newInvoiceTotal
+
+// Display message to user
+document.write('<h3>Welcome to the Invoice Total Calculator</h3>')
+customerType = prompt('Enter customer type (r/w): ')
+invoiceTotal = parseFloat(prompt('Please enter invoice total: '))
+
+// validate customer type
+if(customerType !== 'r' && customerType !== 'w') {
+    alert('Customer type must be r or w')
+}
+else {
+    // calculate discount percent
+    if(customerType === 'w') {
+            discountPercent = 0.1
+        }
+        else {
+            adiscountPercent = 0
+           }}
+
+    // calculate discount amount and new invoice total
+    discountAmount = invoiceTotal * discountPercent
+    newInvoiceTotal = invoiceTotal - discountAmount
+
+        // display output
+    document.write('<p><strong>Invoice Summary:</strong></p>');
+    document.write('Customer Type: ' + customerType + '<br>');
+    document.write('Invoice Total: $' + invoiceTotal.toFixed(2) + '<br>');
+    document.write('Discount Percent: ' + (discountPercent * 100).toFixed(2) + '%<br>');
+    document.write('Discount Amount: $' + discountAmount.toFixed(2) + '<br>');
+    document.write('New Invoice Total: $' + newInvoiceTotal.toFixed(2) + '<br>');
