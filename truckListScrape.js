@@ -6,24 +6,41 @@ console.log('Email User:', process.env.EMAIL_USER);
 console.log('Email Pass:', process.env.EMAIL_PASS);
 
 async function scrapeData() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: false }); // Set headless to false for debugging
     const page = await browser.newPage();
-    await page.goto('https://www.ideality-inc.com/available-trucks/');
+    await page.goto('https://www.ideality-inc.com/available-trucks/', { waitUntil: 'networkidle2' });
+
+    // Wait for the table to be loaded with increased timeout
+    try {
+        console.log('Waiting for table to load...');
+        await page.waitForSelector('.table-body', { timeout: 120000 }); // Increased timeout to 120 seconds
+        console.log('Table loaded.');
+    } catch (error) {
+        console.error('Error waiting for table:', error);
+        await page.screenshot({ path: 'error_screenshot.png' });
+        await browser.close();
+        throw error;
+    }
 
     // Scrape the table data
     const data = await page.evaluate(() => {
-        const rows = Array.from(document.querySelectorAll('table tr'));
+        const rows = Array.from(document.querySelectorAll('.table-body .table-row'));
         return rows.map(row => {
-            const columns = row.querySelectorAll('td');
-            return Array.from(columns).map(column => column.innerText);
+            const columns = row.querySelectorAll('.row-cell');
+            return Array.from(columns).map(column => column.innerText.trim());
         });
     });
+
+    console.log('Scraped Data:', data);
 
     await browser.close();
     return data;
 }
 
 async function sendEmail(data) {
+    console.log('Email User:', process.env.EMAIL_USER);
+    console.log('Email Pass:', process.env.EMAIL_PASS);
+
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
