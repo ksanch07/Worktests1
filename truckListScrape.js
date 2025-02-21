@@ -2,6 +2,9 @@ require('dotenv').config();
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 
+console.log('Email User:', process.env.EMAIL_USER);
+console.log('Email Pass:', process.env.EMAIL_PASS);
+
 async function scrapeData() {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
